@@ -3,8 +3,8 @@
  */
 package com.car.wash.facadeImpl;
 
-import java.awt.List;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,18 +32,18 @@ public class UserFacadeImpl implements UserFacade{
 	private RestTemplate restTemplate;
 
 	@Override
-	public Map<String, Object> process(Object obj) throws Exception{
-		Map<String, Object> map = new HashMap<>();
+	public List<String> process(Object obj) throws Exception{
 		HttpHeaders header = new HttpHeaders();
 		header.setContentType(MediaType.APPLICATION_JSON);
 		HttpEntity<String> request = new HttpEntity<>(obj.toString(), header);
+		List<String> response = null;
 		try {
-			List<Map<String, Object>> response = restTemplate.exchange(userServiceUri, HttpMethod.POST, request, List.class).getBody();
+			response = restTemplate.exchange(userServiceUri, HttpMethod.POST, request, List.class).getBody();
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
 		// TODO Auto-generated method stub
-		return map;
+		return response;
 	}
 
 }

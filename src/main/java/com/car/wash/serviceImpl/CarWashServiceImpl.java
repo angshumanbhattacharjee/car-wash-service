@@ -4,6 +4,7 @@
 package com.car.wash.serviceImpl;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,28 +24,29 @@ public class CarWashServiceImpl implements CarWashService {
 
 	@Autowired
 	private ObjectMapper mapper;
-	
+
+	@Autowired
 	private UserFacade userFacade;
-	
+
 	@Override
 	public CarWashModel washCar(CarWashModel model) throws Exception {
 		CarWashModel model1 = null;
-		Map <String, Object> getWashers = getWasherDetails(getWasherDataMap(model)); 
-		return model1 ;
+		List<String> getWashers = getWasherDetails(getWasherDataMap(model));
+		return model1;
 	}
 
-	private Map<String, Object> getWasherDetails(Map<String, Object> washerDataMap) {
-		Map<String, Object> washerMap = new HashMap<>();
+	private List<String> getWasherDetails(Map<String, Object> washerDataMap) {
+		List<String> washerMap = null;
 		try {
-			washerMap = userFacade.process(mapper.writeValueAsString(washerDataMap));
+			washerMap = (List<String>) userFacade.process(mapper.writeValueAsString(washerDataMap));
 			return washerMap;
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
-		return null;
+		return washerMap;
 	}
 
-	private Map<String , Object> getWasherDataMap(CarWashModel model) throws Exception{
+	private Map<String, Object> getWasherDataMap(CarWashModel model) throws Exception {
 		Map<String, Object> requestMap = new HashMap<>();
 		try {
 			requestMap.put("userRole", "washer");
