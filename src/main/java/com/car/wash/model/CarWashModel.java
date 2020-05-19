@@ -40,7 +40,11 @@ public class CarWashModel implements Serializable{/**
 	
 	@Getter
 	@Setter
-	String userId;
+	String customerId;
+	
+	@Getter
+	@Setter
+	String washerId;
 	
 	@Getter
 	@Setter
@@ -85,5 +89,13 @@ public class CarWashModel implements Serializable{/**
 	@Getter
 	@Setter
 	String carWashDate;
+	
+	@Getter
+	@Setter
+	String washRequestDate;
+	
+	@Getter
+	@Setter
+	String washerNotificationStatus;
 
 }

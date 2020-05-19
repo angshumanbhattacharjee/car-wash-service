@@ -3,7 +3,6 @@
  */
 package com.car.wash.facade;
 
-
 /**
  * @author ANGSHUMAN
  *

@@ -3,6 +3,8 @@
  */
 package com.car.wash.service;
 
+import java.util.List;
+
 import com.car.wash.model.CarWashModel;
 
 /**
@@ -11,6 +13,8 @@ import com.car.wash.model.CarWashModel;
  */
 public interface CarWashService {
 
-	public CarWashModel washCar(CarWashModel model) throws Exception;
+	public List<String> washCar(CarWashModel model) throws Exception;
+
+	public String washerResponse(CarWashModel model) throws Exception;
 
 }
