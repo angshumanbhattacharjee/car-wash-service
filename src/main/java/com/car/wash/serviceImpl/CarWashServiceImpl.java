@@ -96,18 +96,19 @@ public class CarWashServiceImpl implements CarWashService {
 	}
 
 	private CarWashModel updateWasherResponse(CarWashModel model) {
-		CarWashModel model1 = null;
+		Optional<CarWashModel> model1 = null;
 		try {
+			model1 = repository.findById(model.getWashingId());
 			model.setWasherWashStatus(IConstants.APPROVE);
 			model.setCarWashStatus(IConstants.INPROGRESS);
 			model.setCarWashDate(CommonUtility.getCurrentDateInString());
+			model.setWashRequestDate(model1.get().getWashRequestDate());
 			model.setWasherNotificationStatus(IConstants.ENABLED);
-			model1 = repository.save(model);
+			return repository.save(model);
 		} catch (Exception e) {
 			throw e;
 			// TODO: handle exception
 		}
-		return model1;
 	}
 
 	private CarWashModel saveWashDetails(CarWashModel model) {
