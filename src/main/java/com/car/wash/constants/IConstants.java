@@ -34,6 +34,12 @@ public class IConstants {
 	public static final String USERROLE = "userRole";
 	
 	public static final String WASHER = "washer";
+
+	public static final String HI = "Hi ";
+
+	public static final String EXCLAMATION = "!! ";
+
+	public static final String START_WASH_RESPONSE = " has started washing your car!!";
 	
 	
 

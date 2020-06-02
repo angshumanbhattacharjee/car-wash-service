@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.car.wash.constants.IConstants;
 import com.car.wash.emailService.EmailService;
@@ -36,6 +37,10 @@ public class CarWashServiceImpl implements CarWashService {
 	@Autowired
 	@Qualifier("washerFacade")
 	private UserFacade washerFacade;
+	
+	@Autowired
+	@Qualifier("customerFacade")
+	private UserFacade customerFacade;
 
 	@Autowired
 	private CarWashRepository repository;
@@ -78,10 +83,36 @@ public class CarWashServiceImpl implements CarWashService {
 			}
 		} catch (Exception e) {
 			throw e;
-			// TODO: handle exception
 		}
-		// TODO Auto-generated method stub
 		return response;
+	}
+	
+	@Override
+	public String startWash(CarWashModel model) throws Exception {
+		Map<String, Object> getWasherById = null;
+		Map<String, Object> getCustomerById = null;
+		String response = null;
+		try {
+			Optional<CarWashModel> model1 = repository.findById(model.getWashingId());
+			if(model1.isPresent() && !StringUtils.isEmpty(model1.get().getWasherId()) && !StringUtils.isEmpty(model1.get().getCustomerId())) {
+				getWasherById = getWasherName(getWasherNameMap(model));
+				getCustomerById = getCustomerName(getCustomerNameMap(model));
+				response = IConstants.HI + getCustomerById.get(IConstants.USERNAME) + IConstants.EXCLAMATION + getWasherById.get(IConstants.USERNAME) + IConstants.START_WASH_RESPONSE;
+			}
+		} catch (Exception e) {
+			throw e;
+		}
+		return response;
+	}
+	
+	private Map<String, Object> getCustomerNameMap(CarWashModel model) throws Exception {
+		Map<String, Object> requestMap = new HashMap<>();
+		try {
+			requestMap.put(IConstants.USERID, model.getCustomerId());
+		} catch (Exception e) {
+			throw e;
+		}
+		return requestMap;
 	}
 
 	private Map<String, Object> getWasherNameMap(CarWashModel model) throws Exception {
@@ -123,6 +154,17 @@ public class CarWashServiceImpl implements CarWashService {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Map<String, Object> getCustomerName(Map<String, Object> customerNameMap) throws Exception {
+		Map<String, Object> customerList = null;
+		try {
+			customerList = (Map<String, Object>) customerFacade.process(mapper.writeValueAsString(customerNameMap));
+		} catch (Exception e) {
+			throw e;
+		}
+		return customerList;
 	}
 
 	@SuppressWarnings("unchecked")

@@ -53,5 +53,18 @@ public class CarWashController {
 		}
 		return response ;
 	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@PostMapping(value = "/car-wash-service/startCarWash" , produces = MediaType.TEXT_PLAIN_VALUE)
+	ResponseEntity startCarWash(@RequestBody(required = true) CarWashModel model) throws Exception {
+		ResponseEntity response = null;
+		try {
+			response = new ResponseEntity(service.startWash(model), HttpStatus.OK);
+		} catch (Exception e) {
+			response = new ResponseEntity(IConstants.ERROR_IN_PROCESSING_REQUEST , HttpStatus.BAD_REQUEST);
+		}
+		return response ;
+		
+	}
 
 }
