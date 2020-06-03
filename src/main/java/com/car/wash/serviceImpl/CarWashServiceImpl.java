@@ -56,7 +56,6 @@ public class CarWashServiceImpl implements CarWashService {
 			getWashers = getWasherDetails(getWasherDataMap(model));
 			sendMail.sendEmailToWashers(getWashers);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return getWashers;
@@ -95,6 +94,7 @@ public class CarWashServiceImpl implements CarWashService {
 		try {
 			Optional<CarWashModel> model1 = repository.findById(model.getWashingId());
 			if(model1.isPresent() && !StringUtils.isEmpty(model1.get().getWasherId()) && !StringUtils.isEmpty(model1.get().getCustomerId())) {
+				updateStartWashStatus(model1.get());
 				getWasherById = getWasherName(getWasherNameMap(model));
 				getCustomerById = getCustomerName(getCustomerNameMap(model));
 				response = IConstants.HI + getCustomerById.get(IConstants.USERNAME) + IConstants.EXCLAMATION + getWasherById.get(IConstants.USERNAME) + IConstants.START_WASH_RESPONSE;
@@ -104,7 +104,46 @@ public class CarWashServiceImpl implements CarWashService {
 		}
 		return response;
 	}
+
+	@Override
+	public String endWash(CarWashModel model) throws Exception {
+		Map<String, Object> getWasherById = null;
+		Map<String, Object> getCustomerById = null;
+		String response = null;
+		try {
+			Optional<CarWashModel> model1 = repository.findById(model.getWashingId());
+			if(model1.isPresent() && !StringUtils.isEmpty(model1.get().getWasherId()) && !StringUtils.isEmpty(model1.get().getCustomerId())) {
+				updateEndWashStatus(model1.get());
+				getWasherById = getWasherName(getWasherNameMap(model));
+				getCustomerById = getCustomerName(getCustomerNameMap(model));
+				response = IConstants.HI + getCustomerById.get(IConstants.USERNAME) + IConstants.EXCLAMATION + getWasherById.get(IConstants.USERNAME) + IConstants.END_WASH_RESPONSE;
+			}
+		} catch (Exception e) {
+			throw e;
+		}
+		return response;
+	}
 	
+	private void updateStartWashStatus(CarWashModel carWashModel) {
+		try {
+			carWashModel.setCarWashStatus(IConstants.INPROGRESS);
+			repository.save(carWashModel);
+		} catch (Exception e) {
+			throw e;
+		}
+		
+	}
+	
+	private void updateEndWashStatus(CarWashModel carWashModel) {
+		try {
+			carWashModel.setCarWashStatus(IConstants.COMPLETE);
+			repository.save(carWashModel);
+		} catch (Exception e) {
+			throw e;
+		}
+		
+	}
+
 	private Map<String, Object> getCustomerNameMap(CarWashModel model) throws Exception {
 		Map<String, Object> requestMap = new HashMap<>();
 		try {
@@ -130,12 +169,11 @@ public class CarWashServiceImpl implements CarWashService {
 		Optional<CarWashModel> model1 = null;
 		try {
 			model1 = repository.findById(model.getWashingId());
-			model.setWasherWashStatus(IConstants.APPROVE);
-			model.setCarWashStatus(IConstants.INPROGRESS);
-			model.setCarWashDate(CommonUtility.getCurrentDateInString());
-			model.setWashRequestDate(model1.get().getWashRequestDate());
-			model.setWasherNotificationStatus(IConstants.ENABLED);
-			return repository.save(model);
+			model1.get().setWasherWashStatus(IConstants.APPROVE);
+			model1.get().setWasherId(model.getWasherId());
+			model1.get().setCarWashDate(CommonUtility.getCurrentDateInString());
+			model1.get().setWasherNotificationStatus(IConstants.DISABLED);
+			return repository.save(model1.get());
 		} catch (Exception e) {
 			throw e;
 			// TODO: handle exception

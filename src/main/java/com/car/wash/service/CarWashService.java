@@ -19,4 +19,6 @@ public interface CarWashService {
 
 	public String startWash(CarWashModel model) throws Exception;
 
+	public String endWash(CarWashModel model) throws Exception;
+
 }

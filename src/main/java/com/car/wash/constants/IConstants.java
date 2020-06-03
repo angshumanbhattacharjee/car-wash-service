@@ -40,6 +40,10 @@ public class IConstants {
 	public static final String EXCLAMATION = "!! ";
 
 	public static final String START_WASH_RESPONSE = " has started washing your car!!";
+
+	public static final String END_WASH_RESPONSE = " has completed washing your car. Have a great drive !!";
+
+	public static final String COMPLETE = "complete";
 	
 	
 
