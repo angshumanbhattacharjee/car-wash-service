@@ -1,0 +1,37 @@
+{"properties": [
+  {
+    "name": "user.profile.service.criteria.uri",
+    "type": "java.lang.String",
+    "description": "A description for 'user.profile.service.criteria.uri'"
+  },
+  {
+    "name": "mail.smtp.host",
+    "type": "java.lang.String",
+    "description": "A description for 'mail.smtp.host'"
+  },
+  {
+    "name": "mail.smtp.socketFactory.port",
+    "type": "java.lang.String",
+    "description": "A description for 'mail.smtp.socketFactory.port'"
+  },
+  {
+    "name": "mail.smtp.socketFactory.class",
+    "type": "java.lang.String",
+    "description": "A description for 'mail.smtp.socketFactory.class'"
+  },
+  {
+    "name": "mail.smtp.auth",
+    "type": "java.lang.String",
+    "description": "A description for 'mail.smtp.auth'"
+  },
+  {
+    "name": "mail.smtp.port",
+    "type": "java.lang.String",
+    "description": "A description for 'mail.smtp.port'"
+  },
+  {
+    "name": "car.details.service.criteria.uri",
+    "type": "java.lang.String",
+    "description": "A description for 'car.details.service.criteria.uri'"
+  }
+]}

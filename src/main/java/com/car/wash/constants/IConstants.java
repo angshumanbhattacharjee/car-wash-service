@@ -44,6 +44,34 @@ public class IConstants {
 	public static final String END_WASH_RESPONSE = " has completed washing your car. Have a great drive !!";
 
 	public static final String COMPLETE = "complete";
+
+	public static final String MAIL_SMTP_HOST = "mail.smtp.host";
+
+	public static final String SOCKET_FACTORY_PORT = "mail.smtp.socketFactory.port";
+
+	public static final String SOCKET_FACTORY_CLASS = "mail.smtp.socketFactory.class";
+
+	public static final String SMTP_AUTH = "mail.smtp.auth";
+
+	public static final String SMTP_PORT = "mail.smtp.port";
+	
+	public final static String FROM = "greenwashcarservice@gmail.com";
+	
+	public final static String PASSWORD = "greenday@1995";
+
+	public static final String MAIL_SUBJECT = "Request to accept Car Wash with WashingId: ";
+
+	public static final String MAIL_BODY_1 = "A new wash request for you. Customer ";
+
+	public static final String MAIL_BODY_2 = " has requested a car wash with Wash Plan as ";
+
+	public static final String MAIL_BODY_3 = ". Customer has a ";
+	
+	public static final String MAIL_BODY_4 = " car. Please accept the request before others do !!";
+
+	public static final String CARID = "carId";
+
+	public static final String CAR_MANUFACTURER_NAME = "carManufacturerName";
 	
 	
 

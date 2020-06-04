@@ -15,3 +15,10 @@ server:
 
 
 user.profile.service.criteria.uri: http://localhost:9090/user-profile-service/criteria
+car.details.service.criteria.uri: http://localhost:9091/car-details-service/criteria
+
+mail.smtp.host: smtp.gmail.com
+mail.smtp.socketFactory.port: 465
+mail.smtp.socketFactory.class: javax.net.ssl.SSLSocketFactory
+mail.smtp.auth: true
+mail.smtp.port: 465

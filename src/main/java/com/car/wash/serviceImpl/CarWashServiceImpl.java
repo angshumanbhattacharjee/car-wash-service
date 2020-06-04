@@ -12,7 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.car.wash.constants.IConstants;
-import com.car.wash.emailService.EmailService;
+import com.car.wash.emailService.SendEmailService;
+import com.car.wash.facade.CarFacade;
 import com.car.wash.facade.UserFacade;
 import com.car.wash.model.CarWashModel;
 import com.car.wash.repository.CarWashRepository;
@@ -41,24 +42,32 @@ public class CarWashServiceImpl implements CarWashService {
 	@Autowired
 	@Qualifier("customerFacade")
 	private UserFacade customerFacade;
+	
+	@Autowired
+	@Qualifier("carFacade")
+	private CarFacade carFacade;
 
 	@Autowired
 	private CarWashRepository repository;
 
 	@Autowired
-	private EmailService sendMail;
+	private SendEmailService sendMail;
 
 	@Override
 	public List<String> washCar(CarWashModel model) throws Exception {
-		List<String> getWashers = null;
+		List<String> getWasherEmailId = null;
+		Map<String, Object> customerName = new HashMap<>();
+		Map<String, Object> carName = new HashMap<>();;
 		try {
 			saveWashDetails(model);
-			getWashers = getWasherDetails(getWasherDataMap(model));
-			sendMail.sendEmailToWashers(getWashers);
+			getWasherEmailId = getWasherEmailDetails(getWasherDataMap(model));
+			customerName = getCustomerName(getCustomerNameMap(model));
+			carName = getCarName(getCarNameMap(model));
+			sendMail.sendEmailToWashers(getWasherEmailId, model, customerName.get(IConstants.USERNAME), carName.get(IConstants.CAR_MANUFACTURER_NAME));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return getWashers;
+		return getWasherEmailId;
 	}
 
 	@Override
@@ -143,6 +152,16 @@ public class CarWashServiceImpl implements CarWashService {
 		}
 		
 	}
+	
+	private Map<String, Object> getCarNameMap(CarWashModel model) {
+		Map<String, Object> requestMap = new HashMap<>();
+		try {
+			requestMap.put(IConstants.CARID, model.getCarId());
+		} catch (Exception e) {
+			throw e;
+		}
+		return requestMap;
+	}
 
 	private Map<String, Object> getCustomerNameMap(CarWashModel model) throws Exception {
 		Map<String, Object> requestMap = new HashMap<>();
@@ -195,6 +214,17 @@ public class CarWashServiceImpl implements CarWashService {
 	}
 	
 	@SuppressWarnings("unchecked")
+	private Map<String, Object> getCarName(Map<String, Object> carNameMap) {
+		Map<String, Object> carName = null;
+		try {
+			carName = (Map<String, Object>) carFacade.process(mapper.writeValueAsString(carNameMap));
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return carName;
+	}
+	
+	@SuppressWarnings("unchecked")
 	private Map<String, Object> getCustomerName(Map<String, Object> customerNameMap) throws Exception {
 		Map<String, Object> customerList = null;
 		try {
@@ -218,11 +248,11 @@ public class CarWashServiceImpl implements CarWashService {
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<String> getWasherDetails(Map<String, Object> washerDataMap) throws Exception {
-		List<String> washerList = null;
+	private List<String> getWasherEmailDetails(Map<String, Object> washerDataMap) throws Exception {
+		List<String> washerEmailList = null;
 		try {
-			washerList = (List<String>) userFacade.process(mapper.writeValueAsString(washerDataMap));
-			return washerList;
+			washerEmailList = (List<String>) userFacade.process(mapper.writeValueAsString(washerDataMap));
+			return washerEmailList;
 		} catch (Exception e) {
 			throw e;
 			// TODO: handle exception
