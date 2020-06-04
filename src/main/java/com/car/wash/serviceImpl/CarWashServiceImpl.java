@@ -18,8 +18,8 @@ import com.car.wash.facade.UserFacade;
 import com.car.wash.model.CarWashModel;
 import com.car.wash.repository.CarWashRepository;
 import com.car.wash.service.CarWashService;
+import com.car.wash.utility.CommonUtility;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.user.profile.utility.CommonUtility;
 
 /**
  * @author ANGSHUMAN
