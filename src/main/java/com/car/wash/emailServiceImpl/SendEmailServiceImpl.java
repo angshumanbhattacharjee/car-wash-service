@@ -6,12 +6,15 @@ package com.car.wash.emailServiceImpl;
 import java.util.List;
 import java.util.Properties;
 
+import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -90,8 +93,14 @@ public class SendEmailServiceImpl implements SendEmailService {
 		try {
 			MimeMessage message = new MimeMessage(session);    
 	           message.addRecipient(Message.RecipientType.TO,new InternetAddress(To));    
-	           message.setSubject(subject);    
-	           message.setText(body);    
+	           message.setSubject(subject);
+	           
+	           MimeMultipart multiPart = new MimeMultipart("related");
+	           BodyPart messageBody = new MimeBodyPart();
+	           messageBody.setContent(body, "text/html");
+	           multiPart.addBodyPart(messageBody);
+	           message.setContent(multiPart);
+	           
 	           //send message  
 	           Transport.send(message);    
 	           System.out.println("message sent successfully");   

@@ -61,13 +61,13 @@ public class IConstants {
 
 	public static final String MAIL_SUBJECT = "Request to accept Car Wash with WashingId: ";
 
-	public static final String MAIL_BODY_1 = "A new wash request for you. Customer ";
+	public static final String MAIL_BODY_1 = "<h3>Hi Washer,</h3></br>A new wash request for you. Customer ";
 
-	public static final String MAIL_BODY_2 = " has requested a car wash with Wash Plan as ";
+	public static final String MAIL_BODY_2 = " has requested a car wash with Wash Plan as <b>";
 
-	public static final String MAIL_BODY_3 = ". Customer has a ";
+	public static final String MAIL_BODY_3 = "</b>. Customer has a <b>";
 	
-	public static final String MAIL_BODY_4 = " car. Please accept the request before others do !!";
+	public static final String MAIL_BODY_4 = " </b>car. Please accept the request before others do !!";
 
 	public static final String CARID = "carId";
 
