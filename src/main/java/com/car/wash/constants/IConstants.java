@@ -72,6 +72,12 @@ public class IConstants {
 	public static final String CARID = "carId";
 
 	public static final String CAR_MANUFACTURER_NAME = "carManufacturerName";
+
+	public static final String USER_EMAIL_ID = "userEmailId";
+
+	public static final String CAR_MODEL_NAME = "carModel";
+
+	public static final String ADMIN = "admin";
 	
 	
 

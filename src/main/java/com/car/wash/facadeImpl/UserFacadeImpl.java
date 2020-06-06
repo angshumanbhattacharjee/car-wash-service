@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import com.car.wash.constants.IConstants;
 import com.car.wash.facade.UserFacade;
 
 /**
@@ -45,11 +46,11 @@ public class UserFacadeImpl implements UserFacade{
 			response = restTemplate.exchange(userServiceUri, HttpMethod.POST, request, List.class).getBody();
 			if(response != null && !response.isEmpty()) {
 				for (Map<String, Object> entry : response) {
-					list.add((String) entry.get("userEmailId"));
+					list.add((String) entry.get(IConstants.USER_EMAIL_ID));
 				}
 			}
 		} catch (Exception e) {
-			// TODO: handle exception
+			throw e;
 		}
 		// TODO Auto-generated method stub
 		return list;

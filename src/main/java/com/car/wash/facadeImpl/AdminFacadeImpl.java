@@ -3,7 +3,7 @@
  */
 package com.car.wash.facadeImpl;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -18,42 +18,42 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import com.car.wash.constants.IConstants;
-import com.car.wash.facade.CarFacade;
+import com.car.wash.facade.UserFacade;
 
 /**
  * @author ANGSHUMAN
  *
  */
 @Component
-@Qualifier("carFacade")
-public class CarFacadeImpl implements CarFacade{
-	
-	@Value("${car.details.service.criteria.uri}")
-	private String carServiceUri;
+@Qualifier("adminFacade")
+public class AdminFacadeImpl implements UserFacade{
 
+	@Value("${user.profile.service.criteria.uri}")
+	private String userServiceUri;
+	
 	@Autowired
 	private RestTemplate restTemplate;
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked" })
 	@Override
-	public Map<String, Object> process(Object obj) throws Exception{
-		Map<String, Object> map = new HashMap<>();
+	public List<String> process(Object obj) throws Exception{
+		List<String> list = new ArrayList<>();
 		HttpHeaders header = new HttpHeaders();
 		header.setContentType(MediaType.APPLICATION_JSON);
 		HttpEntity<String> request = new HttpEntity<>(obj.toString(), header);
 		List<Map<String, Object>> response = null;
 		try {
-			response = restTemplate.exchange(carServiceUri, HttpMethod.POST, request, List.class).getBody();
+			response = restTemplate.exchange(userServiceUri, HttpMethod.POST, request, List.class).getBody();
 			if(response != null && !response.isEmpty()) {
 				for (Map<String, Object> entry : response) {
-					map.put(IConstants.CAR_MANUFACTURER_NAME, entry.get(IConstants.CAR_MANUFACTURER_NAME));
-					map.put(IConstants.CAR_MODEL_NAME, entry.get(IConstants.CAR_MODEL_NAME));
+					list.add((String) entry.get(IConstants.USER_EMAIL_ID));
 				}
 			}
 		} catch (Exception e) {
 			throw e;
 		}
-		return map;
+		// TODO Auto-generated method stub
+		return list;
 	}
 
 }

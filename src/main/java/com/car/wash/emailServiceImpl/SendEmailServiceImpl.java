@@ -19,6 +19,7 @@ import javax.mail.internet.MimeMultipart;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.car.wash.constants.EmailServiceConstants;
 import com.car.wash.constants.IConstants;
 import com.car.wash.emailService.SendEmailService;
 import com.car.wash.model.CarWashModel;
@@ -61,6 +62,97 @@ public class SendEmailServiceImpl implements SendEmailService {
 		}
 		// TODO Auto-generated method stub
 		
+	}
+	
+	@Override
+	public void sendWasherResponseToCustomer(Object customerEmailId, Object customerName, Object washerName, Object carModelName,
+			CarWashModel carWashModel) throws Exception {
+		String mailSubjectForCustomer = null;
+		String mailBodyForCustomer = null;
+		try {
+			mailSubjectForCustomer = EmailServiceConstants.MAIL_SUBJECT_FOR_CUSTOMER;
+			mailBodyForCustomer = prepareMailBodyForCustomer(customerName, washerName, carModelName, carWashModel);
+			sendEmail(IConstants.FROM, IConstants.PASSWORD, (String) customerEmailId, mailSubjectForCustomer, mailBodyForCustomer);
+		} catch (Exception e) {
+			throw e;
+		}
+		
+	}
+	
+	@Override
+	public void sendWashDetailsToWasher(Object customerName, Object washerName, Object washerEmailId,
+			Object carModelName, CarWashModel carWashModel) throws Exception {
+		String mailSubjectForWasher = null;
+		String mailBodyForWasher = null;
+		try {
+			mailSubjectForWasher = prepareMailSubjectForWasher(carWashModel.getWashingId());
+			mailBodyForWasher = prepareMailBodyForWasher(customerName, washerName, carModelName, carWashModel);
+			sendEmail(IConstants.FROM, IConstants.PASSWORD, (String) washerEmailId, mailSubjectForWasher, mailBodyForWasher);
+		} catch (Exception e) {
+			throw e;
+			// TODO: handle exception
+		}
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void sendMailToAdmin(Object customerName, Object washerName, List<String> adminEmailId, Object carModelName, CarWashModel model)
+			throws Exception {
+		String mailSubjectForAdmin = null;
+		String mailBodyForAdmin = null;
+		try {
+			mailSubjectForAdmin = prepareMailSubjectForAdmin(model.getWashingId());
+			mailBodyForAdmin = prepareMailBodyForAdmin(customerName, washerName, carModelName, model);
+			for(int entry = 0; entry<adminEmailId.size(); entry++) {
+				sendEmail(IConstants.FROM, IConstants.PASSWORD, adminEmailId.get(entry), mailSubjectForAdmin, mailBodyForAdmin);
+			}
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+
+	private String prepareMailBodyForAdmin(Object customerName, Object washerName, Object carModelName, CarWashModel carWashModel) {
+		String body = EmailServiceConstants.HI_ADMIN + (String) washerName + EmailServiceConstants.MAIL_BODY_1 + customerName + EmailServiceConstants.MAIL_BODY_2 + 
+				EmailServiceConstants.WASH_DETAILS_1 + carWashModel.getWashPackage() + EmailServiceConstants.WASH_DETAILS_2 + 
+				carWashModel.getExtraWashAddOns() + EmailServiceConstants.WASH_DETAILS_3 + (String) carModelName + 
+				EmailServiceConstants.WASH_DETAILS_4 + carWashModel.getInfoNotes();
+		// TODO Auto-generated method stub
+		return body ;
+	}
+
+	private String prepareMailSubjectForAdmin(String washingId) {
+		String subject = EmailServiceConstants.WASH_REQUEST_REJECTED_SUBJECT + washingId;
+		// TODO Auto-generated method stub
+		return subject;
+	}
+
+	private String prepareMailBodyForWasher(Object customerName, Object washerName, Object carModelName,
+			CarWashModel carWashModel) {
+		
+		String body = EmailServiceConstants.HI + (String) washerName + EmailServiceConstants.HTML_1 + EmailServiceConstants.WASH_REQUEST_ACCEPTED_TEXT_FOR_WASHER + (String) customerName + 
+				EmailServiceConstants.WASH_DETAILS_1 + carWashModel.getWashPackage() + EmailServiceConstants.WASH_DETAILS_2 + 
+				carWashModel.getExtraWashAddOns() + EmailServiceConstants.WASH_DETAILS_3 + (String) carModelName + 
+				EmailServiceConstants.WASH_DETAILS_4 + carWashModel.getInfoNotes();
+		// TODO Auto-generated method stub
+		return body ;
+	}
+
+	private String prepareMailSubjectForWasher(String washingId) {
+		String subject = EmailServiceConstants.WASH_DETAILS_TEXT + washingId;
+		// TODO Auto-generated method stub
+		return subject ;
+	}
+
+	private String prepareMailBodyForCustomer(Object customerName, Object washerName, Object carModelName,
+			CarWashModel carWashModel) {
+		
+		String body = EmailServiceConstants.HI + (String) customerName + EmailServiceConstants.HTML_1 + (String) washerName + EmailServiceConstants.WASH_REQUEST_ACCEPTED_TEXT + 
+				EmailServiceConstants.WASH_DETAILS_1 + carWashModel.getWashPackage() + EmailServiceConstants.WASH_DETAILS_2 + 
+				carWashModel.getExtraWashAddOns() + EmailServiceConstants.WASH_DETAILS_3 + (String) carModelName + 
+				EmailServiceConstants.WASH_DETAILS_4 + carWashModel.getInfoNotes();
+		
+		return body;
 	}
 
 	private String prepareMailBody(CarWashModel model, Object customerName, Object carManufacturerName) {
@@ -108,12 +200,6 @@ public class SendEmailServiceImpl implements SendEmailService {
 			throw e;
 			// TODO: handle exception
 		}
-		
-	}
-
-	@Override
-	public void sendMailToAdmin(CarWashModel model) {
-		// TODO Auto-generated method stub
 		
 	}
 

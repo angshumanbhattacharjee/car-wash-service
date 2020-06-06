@@ -44,6 +44,10 @@ public class CarWashServiceImpl implements CarWashService {
 	private UserFacade customerFacade;
 	
 	@Autowired
+	@Qualifier("adminFacade")
+	private UserFacade adminFacade;
+	
+	@Autowired
 	@Qualifier("carFacade")
 	private CarFacade carFacade;
 
@@ -60,7 +64,7 @@ public class CarWashServiceImpl implements CarWashService {
 		Map<String, Object> carName = new HashMap<>();;
 		try {
 			saveWashDetails(model);
-			getWasherEmailId = getWasherEmailDetails(getWasherDataMap(model));
+			getWasherEmailId = getWasherEmailDetails(getWasherDataMap());
 			customerName = getCustomerName(getCustomerNameMap(model));
 			carName = getCarName(getCarNameMap(model));
 			sendMail.sendEmailToWashers(getWasherEmailId, model, customerName.get(IConstants.USERNAME), carName.get(IConstants.CAR_MANUFACTURER_NAME));
@@ -72,22 +76,32 @@ public class CarWashServiceImpl implements CarWashService {
 
 	@Override
 	public String washerResponse(CarWashModel model) throws Exception {
-		Map<String, Object> getWasherById = null;
+		Map<String, Object> washerDetails = null;
+		Map<String, Object> customerDetails = null;
+		Map<String, Object> carName = null;
+		List<String> adminEmailId = null;
 		String response = null;
 		try {
 			Optional<CarWashModel> model1 = repository.findById(model.getWashingId());
+			customerDetails = getCustomerName(getCustomerNameMap(model1.get()));
+			carName = getCarName(getCarNameMap(model1.get()));
+			washerDetails = getWasherName(getWasherNameMap(model));
 			if (model.getWasherWashStatus().equals(IConstants.APPROVE)) {
 				if (model1.get().getWasherNotificationStatus().equals(IConstants.ENABLED)) {
 					updateWasherResponse(model);
-					getWasherById = getWasherName(getWasherNameMap(model));
-					response = getWasherById.get(IConstants.USERNAME) + IConstants.WASH_REQUEST_ACCEPTED;
+					sendMail.sendWasherResponseToCustomer(customerDetails.get(IConstants.USER_EMAIL_ID), customerDetails.get(IConstants.USERNAME), washerDetails.get(IConstants.USERNAME), carName.get(IConstants.CAR_MODEL_NAME), model1.get());
+					sendMail.sendWashDetailsToWasher(customerDetails.get(IConstants.USERNAME), washerDetails.get(IConstants.USERNAME),washerDetails.get(IConstants.USER_EMAIL_ID), carName.get(IConstants.CAR_MODEL_NAME), model1.get());
+					response = washerDetails.get(IConstants.USERNAME) + IConstants.WASH_REQUEST_ACCEPTED;
 					System.out.println(response);
 				} else {
 					response = IConstants.WASH_REQUEST_ALREADY_ACCEPTED;
 				}
 			}
 			if (model.getWasherWashStatus().equals(IConstants.DECLINE)) {
-				sendMail.sendMailToAdmin(model);
+				adminEmailId = getAdminDetails(getAdminNameMap());
+				updateWasherResponse(model);
+				response = "Hi " + washerDetails.get(IConstants.USERNAME) + ", You have rejected the wash request!!";
+				sendMail.sendMailToAdmin(customerDetails.get(IConstants.USERNAME), washerDetails.get(IConstants.USERNAME), adminEmailId, carName.get(IConstants.CAR_MODEL_NAME), model1.get());
 			}
 		} catch (Exception e) {
 			throw e;
@@ -172,6 +186,16 @@ public class CarWashServiceImpl implements CarWashService {
 		}
 		return requestMap;
 	}
+	
+	private Map<String, Object> getAdminNameMap() throws Exception {
+		Map<String, Object> requestMap = new HashMap<>();
+		try {
+			requestMap.put(IConstants.USERROLE, IConstants.ADMIN);
+		} catch (Exception e) {
+			throw e;
+		}
+		return requestMap;
+	}
 
 	private Map<String, Object> getWasherNameMap(CarWashModel model) throws Exception {
 		Map<String, Object> requestMap = new HashMap<>();
@@ -188,10 +212,16 @@ public class CarWashServiceImpl implements CarWashService {
 		Optional<CarWashModel> model1 = null;
 		try {
 			model1 = repository.findById(model.getWashingId());
-			model1.get().setWasherWashStatus(IConstants.APPROVE);
-			model1.get().setWasherId(model.getWasherId());
-			model1.get().setCarWashDate(CommonUtility.getCurrentDateInString());
-			model1.get().setWasherNotificationStatus(IConstants.DISABLED);
+			if(model.getWasherWashStatus().equals(IConstants.APPROVE)) {
+				model1.get().setWasherWashStatus(IConstants.APPROVE);
+				model1.get().setWasherId(model.getWasherId());
+				model1.get().setCarWashDate(CommonUtility.getCurrentDateInString());
+				model1.get().setWasherNotificationStatus(IConstants.DISABLED);
+			}
+			if(model.getWasherWashStatus().equals(IConstants.DECLINE)) {
+				model1.get().setWasherWashStatus(IConstants.DECLINE);
+				model1.get().setWasherId(model.getWasherId());
+			}
 			return repository.save(model1.get());
 		} catch (Exception e) {
 			throw e;
@@ -208,20 +238,31 @@ public class CarWashServiceImpl implements CarWashService {
 			model.setWasherNotificationStatus(IConstants.ENABLED);
 			return repository.save(model);
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw e;
 		}
-		return null;
 	}
 	
 	@SuppressWarnings("unchecked")
-	private Map<String, Object> getCarName(Map<String, Object> carNameMap) {
+	private Map<String, Object> getCarName(Map<String, Object> carNameMap) throws Exception {
 		Map<String, Object> carName = null;
 		try {
 			carName = (Map<String, Object>) carFacade.process(mapper.writeValueAsString(carNameMap));
 		} catch (Exception e) {
+			throw e;
 			// TODO: handle exception
 		}
 		return carName;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<String> getAdminDetails(Map<String, Object> adminNameMap) throws Exception {
+		List<String> adminMap = null;
+		try {
+			adminMap = (List<String>) adminFacade.process(mapper.writeValueAsString(adminNameMap));
+		} catch (Exception e) {
+			throw e;
+		}
+		return adminMap;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -259,7 +300,7 @@ public class CarWashServiceImpl implements CarWashService {
 		}
 	}
 
-	private Map<String, Object> getWasherDataMap(CarWashModel model) throws Exception {
+	private Map<String, Object> getWasherDataMap() throws Exception {
 		Map<String, Object> requestMap = new HashMap<>();
 		try {
 			requestMap.put(IConstants.USERROLE, IConstants.WASHER);

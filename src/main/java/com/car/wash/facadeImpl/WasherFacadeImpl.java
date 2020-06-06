@@ -40,6 +40,7 @@ public class WasherFacadeImpl implements UserFacade {
 			if(response != null && !response.isEmpty()) {
 				for (Map<String, Object> entry : response) {
 					map.put(IConstants.USERNAME, entry.get(IConstants.USERNAME));
+					map.put(IConstants.USER_EMAIL_ID, entry.get(IConstants.USER_EMAIL_ID));
 				}
 			}
 		} catch (Exception e) {
