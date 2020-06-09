@@ -16,6 +16,7 @@ server:
 
 user.profile.service.criteria.uri: http://localhost:9090/user-profile-service/criteria
 car.details.service.criteria.uri: http://localhost:9091/car-details-service/criteria
+user.profile.service.user-wash-count-update.uri: http://localhost:9090/user-profile-service/updateUserWashCount
 
 mail.smtp.host: smtp.gmail.com
 mail.smtp.socketFactory.port: 465

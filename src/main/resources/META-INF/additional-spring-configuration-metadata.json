@@ -33,5 +33,10 @@
     "name": "car.details.service.criteria.uri",
     "type": "java.lang.String",
     "description": "A description for 'car.details.service.criteria.uri'"
+  },
+  {
+    "name": "user.profile.service.user-wash-count-update.uri",
+    "type": "java.lang.String",
+    "description": "A description for 'user.profile.service.user-wash-count-update.uri'"
   }
 ]}

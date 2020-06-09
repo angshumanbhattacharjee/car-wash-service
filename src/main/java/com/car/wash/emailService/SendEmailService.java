@@ -13,6 +13,13 @@ public interface SendEmailService {
 	public void sendWasherResponseToCustomer(Object customerEmailId, Object customerName, Object washerName, Object carModelName, CarWashModel carWashModel) throws Exception;
 
 	public void sendWashDetailsToWasher(Object customerName, Object washerName, Object washerEmailId, Object carModelName, CarWashModel carWashModel) throws Exception;
+
+	public void sendStartWashStatusToCustomer(Object washerName, Object customerName, Object customerEmailId, Object carModelName, CarWashModel carWashModel) throws Exception;
+
+	public void sendEndWashStatusToCustomer(Object customerName, Object customerEmailId, Object washerName, Object carModelName, CarWashModel carWashModel);
+
+	public void sendEndWashStatusToWasher(Object washerName, Object washerEmailId, Object customerName, Object carName,
+			CarWashModel carWashModel);
 	
 	
 

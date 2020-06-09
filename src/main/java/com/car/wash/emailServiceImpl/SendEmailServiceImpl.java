@@ -23,6 +23,7 @@ import com.car.wash.constants.EmailServiceConstants;
 import com.car.wash.constants.IConstants;
 import com.car.wash.emailService.SendEmailService;
 import com.car.wash.model.CarWashModel;
+import com.car.wash.utility.CommonUtility;
 
 /**
  * @author ANGSHUMAN
@@ -110,6 +111,89 @@ public class SendEmailServiceImpl implements SendEmailService {
 		} catch (Exception e) {
 			throw e;
 		}
+	}
+	
+	@Override
+	public void sendStartWashStatusToCustomer(Object washerName, Object customerName, Object customerEmailId, Object carModelName, CarWashModel carWashModel) throws Exception {
+		String mailSubjectForCustomer = null;
+		String mailBodyForCustomer = null;
+		try {
+			mailSubjectForCustomer = prepareStartWashSubject(carModelName);
+			mailBodyForCustomer = prepareStartWashBody(washerName, customerName, carModelName);
+			sendEmail(IConstants.FROM, IConstants.PASSWORD, (String) customerEmailId, mailSubjectForCustomer, mailBodyForCustomer);
+		} catch (Exception e) {
+			throw e;
+			// TODO: handle exception
+		}
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void sendEndWashStatusToCustomer(Object customerName, Object customerEmailId, Object washerName, Object carModelName, CarWashModel carWashModel) {
+		String mailSubjectForCustomer = null;
+		String mailBodyForCustomer = null;
+		try {
+			mailSubjectForCustomer = prepareEndWashSubjectForCustomer(carModelName);
+			mailBodyForCustomer = prepareEndWashBodyForCustomer(customerName, washerName, carModelName);
+			sendEmail(IConstants.FROM, IConstants.PASSWORD, (String) customerEmailId, mailSubjectForCustomer, mailBodyForCustomer);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void sendEndWashStatusToWasher(Object washerName, Object washerEmailId, Object customerName, Object carName,
+			CarWashModel carWashModel) {
+		String mailSubjectForWasher = null;
+		String mailBodyForWasher = null;
+		try {
+			mailSubjectForWasher = prepareEndWashSubjectForWasher(carWashModel.getWashingId());
+			mailBodyForWasher = prepareEndWashBodyForWasher(washerName, customerName);
+			sendEmail(IConstants.FROM, IConstants.PASSWORD, (String) washerEmailId, mailSubjectForWasher, mailBodyForWasher);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		// TODO Auto-generated method stub
+		
+	}
+
+	private String prepareEndWashBodyForWasher(Object washerName, Object customerName) {
+		String body = EmailServiceConstants.HI + (String) washerName + EmailServiceConstants.HTML_1 + EmailServiceConstants.COMPLETE_WASH_TEXT_FOR_WASHER + customerName + EmailServiceConstants.PROVIDE_REVIEW_WASHER;
+		// TODO Auto-generated method stub
+		return body;
+	}
+
+	private String prepareEndWashSubjectForWasher(String washingId) {
+		String subject = EmailServiceConstants.WASH_COMPLETED_FOR_WASHER + washingId;
+		// TODO Auto-generated method stub
+		return subject;
+	}
+
+	private String prepareEndWashBodyForCustomer(Object customerName, Object washerName, Object carModelName) {
+		String body = EmailServiceConstants.HI + (String) customerName + EmailServiceConstants.HTML_1 + (String) washerName + EmailServiceConstants.COMPLETE_WASH_TEXT + CommonUtility.getCurrentDateInString() + EmailServiceConstants.IST + EmailServiceConstants.PROVIDE_REVIEW + washerName;
+		// TODO Auto-generated method stub
+		return body;
+	}
+
+	private String prepareEndWashSubjectForCustomer(Object carModelName) {
+		String subject = EmailServiceConstants.WASH_COMPLETED + (String) carModelName + EmailServiceConstants.CAR;
+		// TODO Auto-generated method stub
+		return subject;
+	}
+
+	private String prepareStartWashBody(Object washerName, Object customerName, Object carModelName) {
+		String body = EmailServiceConstants.HI + (String) customerName + EmailServiceConstants.HTML_1 + (String) washerName + EmailServiceConstants.START_WASH_TEXT + CommonUtility.getCurrentDateInString() + EmailServiceConstants.IST;
+		// TODO Auto-generated method stub
+		return body;
+	}
+
+	private String prepareStartWashSubject(Object carModelName) {
+		String subject = EmailServiceConstants.WASH_STARTED + (String) carModelName + EmailServiceConstants.CAR;
+		// TODO Auto-generated method stub
+		return subject;
 	}
 
 	private String prepareMailBodyForAdmin(Object customerName, Object washerName, Object carModelName, CarWashModel carWashModel) {
@@ -202,5 +286,5 @@ public class SendEmailServiceImpl implements SendEmailService {
 		}
 		
 	}
-
+	
 }
