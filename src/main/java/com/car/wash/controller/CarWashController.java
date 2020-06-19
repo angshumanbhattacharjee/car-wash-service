@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.car.wash.constants.IConstants;
+import com.car.wash.dto.UserReviewDTO;
 import com.car.wash.model.CarWashModel;
 import com.car.wash.service.CarWashService;
 
@@ -75,6 +76,20 @@ public class CarWashController {
 			response = new ResponseEntity(service.endWash(model), HttpStatus.OK);
 		} catch (Exception e) {
 			response = new ResponseEntity(IConstants.ERROR_IN_PROCESSING_REQUEST , HttpStatus.BAD_REQUEST);
+		}
+		return response ;
+		
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@PostMapping(value = "/car-wash-service/provideUserReview" , produces = MediaType.TEXT_PLAIN_VALUE)
+	public ResponseEntity provideUserReview(@RequestBody(required = true) UserReviewDTO userReviewDTO) throws Exception {
+		ResponseEntity response = null;
+		try {
+			response = new ResponseEntity(service.provideUserReview(userReviewDTO), HttpStatus.OK);
+		} catch (Exception e) {
+			response = new ResponseEntity(IConstants.ERROR_IN_PROCESSING_REQUEST , HttpStatus.BAD_REQUEST);
+			// TODO: handle exception
 		}
 		return response ;
 		

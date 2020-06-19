@@ -12,11 +12,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.car.wash.constants.IConstants;
+import com.car.wash.dto.UserReviewDTO;
 import com.car.wash.emailService.SendEmailService;
 import com.car.wash.facade.CarFacade;
 import com.car.wash.facade.UserFacade;
 import com.car.wash.facadeImpl.UserWashCountUpdateFacadeImpl;
 import com.car.wash.model.CarWashModel;
+import com.car.wash.publisher.RabbitMQPublish;
 import com.car.wash.repository.CarWashRepository;
 import com.car.wash.service.CarWashService;
 import com.car.wash.utility.CommonUtility;
@@ -61,6 +63,9 @@ public class CarWashServiceImpl implements CarWashService {
 
 	@Autowired
 	private SendEmailService sendMail;
+	
+	@Autowired
+	private RabbitMQPublish rabbit;
 
 	@Override
 	public List<String> washCar(CarWashModel model) throws Exception {
@@ -162,6 +167,14 @@ public class CarWashServiceImpl implements CarWashService {
 			throw e;
 		}
 		return combinedResponse;
+	}
+	
+	@Override
+	public String provideUserReview(UserReviewDTO userReviewDTO) {
+		String response = null;
+		rabbit.publish(userReviewDTO);
+		response = IConstants.REVIEW;
+		return response;
 	}
 	
 	private void updateStartWashStatus(CarWashModel carWashModel) {
@@ -339,5 +352,6 @@ public class CarWashServiceImpl implements CarWashService {
 		// TODO Auto-generated method stub
 		return requestMap;
 	}
+
 
 }

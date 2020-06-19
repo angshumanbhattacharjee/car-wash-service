@@ -16,10 +16,10 @@ public interface SendEmailService {
 
 	public void sendStartWashStatusToCustomer(Object washerName, Object customerName, Object customerEmailId, Object carModelName, CarWashModel carWashModel) throws Exception;
 
-	public void sendEndWashStatusToCustomer(Object customerName, Object customerEmailId, Object washerName, Object carModelName, CarWashModel carWashModel);
+	public void sendEndWashStatusToCustomer(Object customerName, Object customerEmailId, Object washerName, Object carModelName, CarWashModel carWashModel) throws Exception;
 
 	public void sendEndWashStatusToWasher(Object washerName, Object washerEmailId, Object customerName, Object carName,
-			CarWashModel carWashModel);
+			CarWashModel carWashModel) throws Exception;
 	
 	
 

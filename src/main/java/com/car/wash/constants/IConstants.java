@@ -3,6 +3,7 @@
  */
 package com.car.wash.constants;
 
+
 /**
  * @author ANGSHUMAN
  *
@@ -78,7 +79,8 @@ public class IConstants {
 	public static final String CAR_MODEL_NAME = "carModel";
 
 	public static final String ADMIN = "admin";
-	
+
+	public static final String REVIEW = "Review has been provided !!";	
 	
 
 }

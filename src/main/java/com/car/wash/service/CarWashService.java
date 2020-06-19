@@ -5,6 +5,7 @@ package com.car.wash.service;
 
 import java.util.List;
 
+import com.car.wash.dto.UserReviewDTO;
 import com.car.wash.model.CarWashModel;
 
 /**
@@ -20,5 +21,7 @@ public interface CarWashService {
 	public String startWash(CarWashModel model) throws Exception;
 
 	public String endWash(CarWashModel model) throws Exception;
+
+	public String provideUserReview(UserReviewDTO userReviewDTO);
 
 }

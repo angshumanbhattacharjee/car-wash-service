@@ -2,6 +2,9 @@ spring:
   profiles: default
   application:
     name: car-wash-service
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
   data:
     mongodb:
       host: localhost
@@ -23,3 +26,5 @@ mail.smtp.socketFactory.port: 465
 mail.smtp.socketFactory.class: javax.net.ssl.SSLSocketFactory
 mail.smtp.auth: true
 mail.smtp.port: 465
+
+data.transform.queue: user.review.queue
