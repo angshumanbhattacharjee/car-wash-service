@@ -28,3 +28,4 @@ mail.smtp.auth: true
 mail.smtp.port: 465
 
 data.transform.queue: user.review.queue
+user.profile.update.queue: user.wash.count.update.queue

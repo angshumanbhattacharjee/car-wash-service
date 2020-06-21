@@ -17,13 +17,16 @@ public class RabbitMQPublish {
 	@Value("${data.transform.queue}")
 	private String transformQueue;
 	
+	@Value("${user.profile.update.queue}")
+	private String userWashCountQueue;
+	
 	@Autowired
 	private ObjectMapper mapper;
 	
 	@Autowired
 	private AmqpTemplate template;
 	
-	public void publish(Object userReviewDTO) {
+	public void publishUserReviewDTO(Object userReviewDTO) {
 		try {
 			if (userReviewDTO != null) {
 				String json = null;
@@ -34,6 +37,23 @@ public class RabbitMQPublish {
 				
 				template.convertAndSend(transformQueue, json);				
 				log.info(String.format("Published Message to Queue:%s with %s", transformQueue, json));
+			}
+		} catch (Exception e) {
+			log.info(IConstants.ERROR_IN_PROCESSING_REQUEST, e.getMessage());
+		}
+	}
+
+	public void publishUserWashCountDTO(Object washCountDTO) {
+		try {
+			if (washCountDTO != null) {
+				String json = null;
+				if (!(washCountDTO instanceof String))
+					json = mapper.writeValueAsString(washCountDTO);
+				else
+					json = washCountDTO.toString();
+				
+				template.convertAndSend(userWashCountQueue, json);
+				log.info(String.format("Published Message to Queue:%s with %s", userWashCountQueue, json));
 			}
 		} catch (Exception e) {
 			log.info(IConstants.ERROR_IN_PROCESSING_REQUEST, e.getMessage());

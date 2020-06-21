@@ -13,6 +13,7 @@ import org.springframework.util.StringUtils;
 
 import com.car.wash.constants.IConstants;
 import com.car.wash.dto.UserReviewDTO;
+import com.car.wash.dto.UserWashCountUpdateDTO;
 import com.car.wash.emailService.SendEmailService;
 import com.car.wash.facade.CarFacade;
 import com.car.wash.facade.UserFacade;
@@ -63,6 +64,9 @@ public class CarWashServiceImpl implements CarWashService {
 
 	@Autowired
 	private SendEmailService sendMail;
+	
+	@Autowired
+	private UserWashCountUpdateDTO washCount;
 	
 	@Autowired
 	private RabbitMQPublish rabbit;
@@ -146,9 +150,7 @@ public class CarWashServiceImpl implements CarWashService {
 		Map<String, Object> washerDetails = null;
 		Map<String, Object> customerDetails = null;
 		Map<String, Object> carName = null;
-		String responseForCustomer = null;
-		String responseForWasher = null;
-		String combinedResponse = null;
+		String response = null;
 		try {
 			Optional<CarWashModel> model1 = repository.findById(model.getWashingId());
 			if(model1.isPresent() && !StringUtils.isEmpty(model1.get().getWasherId())) {
@@ -158,21 +160,21 @@ public class CarWashServiceImpl implements CarWashService {
 				carName = getCarName(getCarNameMap(model1.get()));
 				sendMail.sendEndWashStatusToCustomer(customerDetails.get(IConstants.USERNAME), customerDetails.get(IConstants.USER_EMAIL_ID), washerDetails.get(IConstants.USERNAME), carName.get(IConstants.CAR_MODEL_NAME), model1.get());
 				sendMail.sendEndWashStatusToWasher(washerDetails.get(IConstants.USERNAME), washerDetails.get(IConstants.USER_EMAIL_ID), customerDetails.get(IConstants.USERNAME), carName.get(IConstants.CAR_MODEL_NAME), model1.get());
-				responseForCustomer = updateUserWashCount(getCustomerDetailsMap(model1.get()));
-				responseForWasher = updateUserWashCount(getWasherDetailsMap(model1.get()));
-				combinedResponse = responseForCustomer + "	.....	" + responseForWasher;
-				//response = IConstants.HI + getCustomerById.get(IConstants.USERNAME) + IConstants.EXCLAMATION + getWasherById.get(IConstants.USERNAME) + IConstants.END_WASH_RESPONSE;
+				washCount.setUserIdCustomer(model1.get().getCustomerId());
+				washCount.setUserIdWasher(model1.get().getWasherId());
+				rabbit.publishUserWashCountDTO(washCount);
+				response = washerDetails.get(IConstants.USERNAME) + IConstants.END_WASH_RESPONSE + CommonUtility.getCurrentDateInString();
 			}
 		} catch (Exception e) {
 			throw e;
 		}
-		return combinedResponse;
+		return response;
 	}
 	
 	@Override
 	public String provideUserReview(UserReviewDTO userReviewDTO) {
 		String response = null;
-		rabbit.publish(userReviewDTO);
+		rabbit.publishUserReviewDTO(userReviewDTO);
 		response = IConstants.REVIEW;
 		return response;
 	}
@@ -270,18 +272,6 @@ public class CarWashServiceImpl implements CarWashService {
 		} catch (Exception e) {
 			throw e;
 		}
-	}
-	
-	private String updateUserWashCount(Map<String, Object> userDetailsMap) throws Exception {
-		String response = null;
-		try {
-			response = (String) userWashCountUpdate.process(mapper.writeValueAsString(userDetailsMap));
-		} catch (Exception e) {
-			throw e;
-			// TODO: handle exception
-		}
-		return response;
-		
 	}
 	
 	@SuppressWarnings("unchecked")
